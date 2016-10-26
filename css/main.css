@@ -1,0 +1,91 @@
+.popup {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(102, 102, 102, .9);
+}
+
+.popup.show {
+    display: flex;
+}
+
+.popup .aligned {
+    height: 400px;
+    width: 400px;
+}
+
+.indicator-header {
+    position: relative;
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+}
+
+.indicator-header__close-button {
+    position: absolute;
+    top: 7px;
+    right: 5px;
+    background: transparent;
+    color: #fff;
+    border: none;
+}
+
+.indicator-body {
+    border-radius: 0 0 10px 10px;
+    padding: 20px;
+    background: #ccc;
+}
+
+.indicator-section {
+    border: 1px solid #999;
+    border-radius: 10px;
+    padding: 30px;
+    background: #fff;
+}
+
+.indicator-section__progress-wrapper {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.indicator-section__current-value {
+    position: absolute;
+    top: 25px;
+}
+
+.indicator-section__label {
+    padding-right: 10px;
+}
+
+.indicator-section__progress {
+    margin-right: 5px;
+}
+
+.indicator-target__wrapper {
+    border-radius: 5px;
+    padding: 5px;
+    background: linear-gradient(to bottom, #adadad 0%,#7f7f7f 100%);
+    align-self: flex-start;
+    color: #fff;
+    text-align: center;
+}
+
+.indicator-target__header {
+    border-bottom: 1px solid #333;
+    padding: 0 10px;
+}
+
+.indicator-target__value {
+    border-top: 1px solid #ccc;
+    padding: 0 10px;
+    font-size: 24px;
+}
