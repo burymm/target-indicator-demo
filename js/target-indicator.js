@@ -1,16 +1,21 @@
 $.widget( "custom.targetIndicator", {
     // default options
     options: {
-        minValue: 0,
         maxValue: 100,
-        currentValue: 0,
-
-        // Callbacks
-        change: null
+        currentValue: 0
     },
 
-    // The constructor
+    _validation: function () {
+        if (this.options.currentValue > this.options.maxValue || this.options.maxValue <= 0 ||
+            this.options.currentValue < 0) {
+            this._destroy();
+            throw 'Wrong initial options';
+        }
+    },
+
     _create: function() {
+       this._validation();
+
         this.element
             // add a class for theming
             .addClass( "target-indicator-wrapper" );
@@ -46,14 +51,16 @@ $.widget( "custom.targetIndicator", {
             class: 'indicator-section__label'
         });
 
-        var progressLine = $('<progress>', {
-            class: 'indicator-section__progress',
-            max: this.options.maxValue,
-            value: this.options.currentValue
+        this.progressLineWrapper = $('<div>', {
+            class: 'indicator-section__progress-line-wrapper'
         });
 
-        var progressCurrent = $('<div>', {
-            text: '$' + this.options.currentValue,
+        this.progressLine = $('<div>', {
+            class: 'indicator-section__progress'
+        });
+
+        this.progressCurrent = $('<div>', {
+            text: this._getCurrentText(),
             class: 'indicator-section__current-value'
         });
 
@@ -71,8 +78,8 @@ $.widget( "custom.targetIndicator", {
             class: 'indicator-target__value'
         });
 
-        var hintText = $('<div>', {
-            text: 'You need $' + this._getRemain() + ' more to reach your target',
+        this.hintText = $('<div>', {
+            text: this._getHintText(this._getRemain()),
             class: 'indicator-hint'
         });
 
@@ -81,12 +88,13 @@ $.widget( "custom.targetIndicator", {
         targetContainer.append(targetValue);
 
         progressWrapper.append(progressText);
-        progressWrapper.append(progressLine);
+        this.progressLineWrapper.append(this.progressLine);
+        this.progressLineWrapper.append(this.progressCurrent);
+        progressWrapper.append(this.progressLineWrapper);
         progressWrapper.append(targetContainer);
-        progressWrapper.append(progressCurrent);
 
         section.append(progressWrapper);
-        section.append(hintText);
+        section.append(this.hintText);
 
         this.body.append(section);
 
@@ -95,75 +103,57 @@ $.widget( "custom.targetIndicator", {
 
         this.element.append(this.header);
         this.element.append(this.body);
+        this.progressLine.width(0);
 
-        /*// Bind click events on the changer button to the random method
-         this._on( this.changer, {
-         // _on won't call random when widget is disabled
-         click: "random"
-         });*/
-        this._refresh();
+        this.created = true;
+
+        setTimeout((function() {
+            this._refresh();
+        }).bind(this), 20);
     },
 
     _getRemain: function () {
         return this.options.maxValue - this.options.currentValue;
     },
 
-    // Called when created, and later when changing options
-    _refresh: function() {
-        /*this.element.css( "background-color", "rgb(" +
-         this.options.red +"," +
-         this.options.green + "," +
-         this.options.blue + ")"
-         );
-
-         // Trigger a callback/event
-         this._trigger( "change" );*/
+    _getCurrentText: function () {
+        return '$' + this.options.currentValue;
     },
 
-    // A public method to change the color to a random value
-    // can be called directly via .colorize( "random" )
-    /* random: function( event ) {
-     var colors = {
-     red: Math.floor( Math.random() * 256 ),
-     green: Math.floor( Math.random() * 256 ),
-     blue: Math.floor( Math.random() * 256 )
-     };
+    _getHintText: function (value) {
+        return 'You need $' + value + ' more to reach your target';
+    },
 
-     // Trigger an event, check if it's canceled
-     if ( this._trigger( "random", event, colors ) !== false ) {
-     this.option( colors );
-     }
-     },*/
+    _refresh: function() {
+        var width, step, pxInStep, currentWidth, offsetX;
 
-    // Events bound via _on are removed automatically
-    // revert other modifications here
+        if (!this.created) {
+            this._create();
+        }
+
+        width = this.progressLineWrapper.width();
+        step = this.options.maxValue;
+        pxInStep = width / step;
+        currentWidth = this.progressCurrent.width();
+        offsetX = (this.options.currentValue) * pxInStep;
+
+        this.hintText.text(this._getHintText(this._getRemain()));
+        this.progressCurrent.text(this._getCurrentText());
+
+        this.progressLine.width(offsetX);
+
+        this.progressCurrent.css('left', offsetX  - currentWidth / 2);
+    },
+
     _destroy: function() {
-        // remove generated elements
-        /*this.changer.remove();
-
-         this.element
-         .removeClass( "custom-colorize" )
-         .enableSelection()
-         .css( "background-color", "transparent" );*/
-        this.header.remove();
-        this.body.remove();
+        this.header && this.header.remove();
+        this.body && this.body.remove();
         console.log('widget destroyed');
     },
 
-    // _setOptions is called with a hash of all options that are changing
-    // always refresh when changing options
     _setOptions: function() {
-        // _super and _superApply handle keeping the right this-context
         this._superApply( arguments );
+        this._validation();
         this._refresh();
-    },
-
-    // _setOption is called for each individual option that is changing
-    /*_setOption: function( key, value ) {
-     // prevent invalid color values
-     if ( /red|green|blue/.test(key) && (value < 0 || value > 255) ) {
-     return;
-     }
-     this._super( key, value );
-     }*/
+    }
 });

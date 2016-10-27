@@ -3,17 +3,35 @@
  */
 
 $(document).ready(function () {
-
     function indicatorButtonCallback () {
-        var popup = $('#target-popup');
+        var popup = $('#target-popup'),
+            currentValue = parseInt($('#current-value').val()),
+            maxValue = parseInt($('#max-value').val());
 
-        $indicatorContainer.targetIndicator({
-            minValue: 0,
-            maxValue: 15,
-            currentValue: 14
-        });
+        try {
+            $indicatorContainer.targetIndicator({
+                maxValue: maxValue,
+                currentValue: currentValue
+            });
 
-        popup.addClass('show');
+            popup.addClass('show');
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    function indicatorButtonDivCallback () {
+        var currentValue = parseInt($('#current-value').val()),
+            maxValue = parseInt($('#max-value').val());
+
+        try {
+            $indicatorDivContainer.targetIndicator({
+                maxValue: maxValue,
+                currentValue: currentValue
+            });
+        } catch (error) {
+            alert(error);
+        }
     }
 
     function indicatorCloseButtonCallback () {
@@ -30,47 +48,11 @@ $(document).ready(function () {
     }
 
     var $indicatorButton = $('#show-indicator-widget'),
-        $indicatorContainer = $('#indicator-container');
+        $indicatorDivButton = $('#show-indicator-div-widget'),
+        $indicatorContainer = $('#indicator-container'),
+        $indicatorDivContainer = $('#empty-div');
 
     $indicatorButton.on('click', indicatorButtonCallback);
+    $indicatorDivButton.on('click', indicatorButtonDivCallback);
     $(document.body).on('click', globalClickCallback);
-
-
-    /*// Initialize with default options
-    $( "#my-widget1" ).colorize();
-
-    // Initialize with two customized options
-    $( "#my-widget2" ).colorize({
-        red: 60,
-        blue: 60
-    });
-
-    // Initialize with custom green value
-    // and a random callback to allow only colors with enough green
-    $( "#my-widget3" ).colorize( {
-        green: 128,
-        random: function( event, ui ) {
-            return ui.green > 128;
-        }
-    });
-
-    // Click to toggle enabled/disabled
-    $( "#disable" ).on( "click", function() {
-        // use the custom selector created for each widget to find all instances
-        // all instances are toggled together, so we can check the state from the first
-        if ( $( ":custom-colorize" ).colorize( "option", "disabled" ) ) {
-            $( ":custom-colorize" ).colorize( "enable" );
-        } else {
-            $( ":custom-colorize" ).colorize( "disable" );
-        }
-    });
-
-    // Click to set options after initialization
-    $( "#green" ).on( "click", function() {
-        $( ":custom-colorize" ).colorize( "option", {
-            red: 64,
-            green: 250,
-            blue: 8
-        });
-    });*/
 });
