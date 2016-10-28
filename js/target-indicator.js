@@ -109,7 +109,7 @@ $.widget( "custom.targetIndicator", {
 
         setTimeout((function() {
             this._refresh();
-        }).bind(this), 20);
+        }).bind(this), 0);
     },
 
     _getRemain: function () {
